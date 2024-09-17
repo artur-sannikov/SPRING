@@ -1,7 +1,7 @@
 {
   description = "Nix Flake for SPRING R package";
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
     SpiecEasi.url = "github:artur-sannikov/SpiecEasi/nix-flakes";
   };
@@ -36,12 +36,19 @@
               SpiecEasiPkg
             ];
         };
+        rvenv = pkgs.rWrapper.override {
+          packages = with pkgs.rPackages; [
+            devtools
+            languageserver
+          ];
+        };
       in
       {
         packages.default = SPRING;
         devShells.default = pkgs.mkShell {
           buildInputs = [ SPRING ];
           inputsFrom = pkgs.lib.singleton SPRING;
+          packages = pkgs.lib.singleton rvenv;
         };
       }
     );
